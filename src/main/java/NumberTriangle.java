@@ -88,8 +88,15 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
-        return -1;
+        if (path.equals("")) {
+            return this.root;
+        } else {
+            if (path.substring(0,1).equals("l")) {
+                return this.left.retrieve(path.substring(1));
+            } else {
+                return this.right.retrieve(path.substring(1));
+            }
+        }
     }
 
     /** Read in the NumberTriangle structure from a file.
@@ -109,20 +116,44 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
+        NumberTriangle[] prev = new NumberTriangle[100];
 
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
         NumberTriangle top = null;
 
         String line = br.readLine();
+
+        top = new NumberTriangle(Integer.parseInt(line)); //get top of triangle
+        prev[0] = top;
+        line = br.readLine();
+        int width = 0;
+
         while (line != null) {
-
             // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            // System.out.println(line);
 
-            // TODO process the line
+            String[] row = line.split(" ");
+
+            NumberTriangle[] newPrev = new NumberTriangle[prev.length];
+
+            NumberTriangle temp = new NumberTriangle(Integer.parseInt(row[0]));
+            prev[0].setLeft(temp);
+            newPrev[0] = temp;
+
+            for (int i = 0; i < width; i++) {
+                temp = new NumberTriangle(Integer.parseInt(row[i+1]));
+                prev[i].setRight(temp);
+                prev[i+1].setLeft(temp);
+                newPrev[i+1] = temp;
+            }
+
+            temp = new NumberTriangle(Integer.parseInt(row[width + 1]));
+            prev[width].setRight(temp);
+            newPrev[width + 1] = temp;
+
+            width += 1;
+            prev = newPrev;
 
             //read the next line
             line = br.readLine();
